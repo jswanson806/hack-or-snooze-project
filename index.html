@@ -37,6 +37,10 @@
   <div class="navbar-brand">
     <a class="nav-link" href="#" id="nav-all">Hack or Snooze</a>
   </div>
+  <div class="nav-user-actions">
+    <a class="nav-link" href="#" id="nav-submit">Submit</a>
+    <a class="nav-link" href="#" id="nav-favorites">Favorites</a>
+  </div>
   <div class="nav-right">
     <a class="nav-link" href="#" id="nav-login">login/signup</a>
     <a class="nav-link" href="#" id="nav-user-profile"></a>
@@ -47,11 +51,36 @@
 <!-- area for stories (all stories, user stories, favorites) -->
 <section class="stories-container container">
 
+  <!-- new story submission -->
+  <form 
+    action=""
+    id="new-story-form"
+    class="hidden"
+    method="post">
+    <h4>New Story</h4>
+    <div class="new-story-input">
+      <label for="new-story-title">Title</label>
+      <input id="new-story-title" required>
+    </div>
+    <div class="new-story-input">
+      <label for="new-story-author">Author</label>
+      <input id="new-story-author" required>
+    </div>
+    <div class="new-story-input">
+      <label for="new-story-url">URL</label>
+      <input id="new-story-url" type="url" required>
+    </div>
+      <button type="submit" id="submit">Submit</button>
+  </form>
+
   <!-- loading message (removed by JS after stories loaded) -->
   <div id="stories-loading-msg">Loading&hellip;</div>
 
   <!-- List of all stories -->
   <ol id="all-stories-list" class="stories-list"></ol>
+  
+  <!-- List of favorited stories -->
+  <ol id="fav-stories-list" class="stories-list"></ol>
 
 </section>
 
@@ -95,6 +124,8 @@
     <button type="submit">create account</button>
   </form>
 </section>
+
+
 
 <!-- Library JS & our JS -->
 <script src="https://unpkg.com/jquery"></script>

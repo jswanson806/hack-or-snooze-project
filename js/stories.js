@@ -25,6 +25,7 @@ function generateStoryMarkup(story) {
   const hostName = story.getHostName();
   return $(`
       <li id="${story.storyId}">
+      <span id="blank-star">&#9734;</span>
         <a href="${story.url}" target="a_blank" class="story-link">
           ${story.title}
         </a>
@@ -50,3 +51,38 @@ function putStoriesOnPage() {
 
   $allStoriesList.show();
 }
+
+/** gathers form data from $submitForm, 
+ * submits post request with currentUser and data, 
+ * generates newStory HTML, 
+ * puts the new story on the page
+ * hides and resets $submitForm
+ * */
+
+async function putNewStoryOnPage(evt) {
+  console.debug("putNewStoryOnPage", evt);
+  evt.preventDefault();
+  
+  //get the data from the form
+  const title = $("#new-story-title").val();
+  const author = $("#new-story-author").val();
+  const url = $("#new-story-url").val();
+  const username = currentUser.username;
+  const storyObj = {title, url, author, username};
+
+  //wait for call to addStory()
+  const newStory = await storyList.addStory(currentUser, storyObj);
+
+  //put the new story on the page
+  const storyMarkup = generateStoryMarkup(newStory);
+  $allStoriesList.prepend(storyMarkup);
+
+  //hide the form and reset fields
+  $submitForm.hide();
+  $submitForm.trigger("reset");
+  
+}
+
+$("#new-story-form").on('submit', putNewStoryOnPage);
+
+
