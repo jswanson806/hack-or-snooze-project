@@ -2,6 +2,7 @@
 
 // global to hold the User instance of the currently-logged-in user
 let currentUser;
+let loggedIn;
 
 /******************************************************************************
  * User login/signup/login
@@ -20,7 +21,7 @@ async function login(evt) {
   // User.login retrieves user info from API and returns User instance
   // which we'll make the globally-available, logged-in user.
   currentUser = await User.login(username, password);
-
+  loggedIn = true;
   $loginForm.trigger("reset");
 
   saveUserCredentialsInLocalStorage();
@@ -43,10 +44,14 @@ async function signup(evt) {
   // which we'll make the globally-available, logged-in user.
   currentUser = await User.signup(username, password, name);
 
+  //set loggedIn to true
+  loggedIn = true;
+
   saveUserCredentialsInLocalStorage();
   updateUIOnUserLogin();
-
+  
   $signupForm.trigger("reset");
+ 
 }
 
 $signupForm.on("submit", signup);
@@ -58,8 +63,10 @@ $signupForm.on("submit", signup);
 
 function logout(evt) {
   console.debug("logout", evt);
+  loggedIn = false;
   localStorage.clear();
   location.reload();
+  
 }
 
 $navLogOut.on("click", logout);
@@ -76,10 +83,15 @@ async function checkForRememberedUser() {
   console.debug("checkForRememberedUser");
   const token = localStorage.getItem("token");
   const username = localStorage.getItem("username");
-  if (!token || !username) return false;
+  if (!token || !username) {
+    loggedIn = false;
+    return false;
+  }
 
   // try to log in with these credentials (will be null if login failed)
   currentUser = await User.loginViaStoredCredentials(token, username);
+
+  
 }
 
 /** Sync current user information to localStorage.
@@ -109,8 +121,8 @@ function saveUserCredentialsInLocalStorage() {
 
 function updateUIOnUserLogin() {
   console.debug("updateUIOnUserLogin");
-
+  hidePageComponents();
   $allStoriesList.show();
-
-  updateNavOnLogin();
+  
+  updateNavOnLogin(); //in nav.js
 }

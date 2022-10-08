@@ -37,7 +37,7 @@
   <div class="navbar-brand">
     <a class="nav-link" href="#" id="nav-all">Hack or Snooze</a>
   </div>
-  <div class="nav-user-actions">
+  <div class="nav-user-actions" hidden>
     <a class="nav-link" href="#" id="nav-submit">Submit</a>
     <a class="nav-link" href="#" id="nav-favorites">Favorites</a>
   </div>
@@ -78,6 +78,9 @@
 
   <!-- List of all stories -->
   <ol id="all-stories-list" class="stories-list"></ol>
+
+  <!-- List of all stories -->
+  <ol id="own-stories-list" class="stories-list"></ol>
   
   <!-- List of favorited stories -->
   <ol id="fav-stories-list" class="stories-list"></ol>
@@ -129,7 +132,8 @@
 
 <!-- Library JS & our JS -->
 <script src="https://unpkg.com/jquery"></script>
-<script src="https://unpkg.com/axios/dist/axios.js"></script>
+<script src="https://unpkg.com/axios@0.27.2/dist/axios.min.js"></script>
+<script src="https://unpkg.com/lodash"></script>
 
 <script src="js/models.js"></script>
 <script src="js/main.js"></script>

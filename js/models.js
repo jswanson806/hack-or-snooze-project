@@ -24,8 +24,10 @@ class Story {
   /** Parses hostname out of URL and returns it. */
 
   getHostName() {
-    // UNIMPLEMENTED: complete this function!
-    return "hostname.com";
+    //hold obj with url info
+    let url = new URL(this.url);
+    //return the hostname from the url obj
+    return url.hostname;
   }
 }
 
@@ -48,10 +50,6 @@ class StoryList {
    */
 
   static async getStories() {
-    // Note presence of `static` keyword: this indicates that getStories is
-    //  **not** an instance method. Rather, it is a method that is called on the
-    //  class directly. Why doesn't it make sense for getStories to be an
-    //  instance method?
 
     // query the /stories endpoint (no auth required)
     const response = await axios({
@@ -71,6 +69,8 @@ class StoryList {
    * - obj of {title, author, url}
    *
    * Returns the new Story instance
+   * 
+   * auth required
    */
 
   async addStory(user, {title, author, url}) {
@@ -85,12 +85,47 @@ class StoryList {
     });
 
     const story = new Story(response.data.story);
+    //add the story to the top of the stories arr
     this.stories.unshift(story);
+    //add the story to the users ownStories[]
+    currentUser.ownStories.push(story);
 
     return story;
   }
 
+
+  /** Remove story data from API, removes a Story instance, 
+   * removes it from story list and ownStories list.
+   * 
+   * - user - the current instance of User who will remove the story
+   * - storyId - the target story to remove
+   *
+   *  auth required
+   */
+
+   async removeStory(user, storyId) {
+    const token = user.loginToken;
+
+    //call to api
+    const response = await axios({
+      url: `${BASE_URL}/stories/${storyId}`,
+      method: "DELETE",
+      data: { token: user.loginToken },
+    });
+
+      //use lodash to filter out story from the instance of storyList
+    this.stories = _.filter(this.stories, function(s) {
+      return s.storyId !== storyId;
+    })
+      //use lodash to filter out story from current user's ownStories[]
+      user.ownStories = _.filter(user.ownStories, function(s) {
+      return s.storyId !== storyId;
+    })
+
 }
+}
+
+
 
 
 /******************************************************************************
@@ -180,9 +215,12 @@ class User {
 
   /** When we already have credentials (token & username) for a user,
    *   we can log them in automatically. This function does that.
+   * 
+   *  auth required
    */
 
   static async loginViaStoredCredentials(token, username) {
+    //try to get user info from api
     try {
       const response = await axios({
         url: `${BASE_URL}/users/${username}`,
@@ -190,8 +228,10 @@ class User {
         params: { token },
       });
 
+      //object to hold user data from api response
       let { user } = response.data;
 
+      //create a new instance of User with user info from api response
       return new User(
         {
           username: user.username,
@@ -202,12 +242,66 @@ class User {
         },
         token
       );
+      //catch a failed login attempt and display error in the console
     } catch (err) {
       console.error("loginViaStoredCredentials failed", err);
       return null;
     }
+  };
+
+  /** Add or remove favorites from user and update api*/
+
+  //push story to user favorites[] > call handleFavoriteStories()
+  async addFavorite(story) {
+ 
+    //push story to favorites[]
+    this.favorites.push(story);
+
+    //call handleFavoriteStories > pass api call method and story 
+    //"push" should evaluate to "POST" 
+    await this.handleFavoriteStories("push", story);
+  };
+
+  //remove story and update user favorites[] > call handleFavoriteStories()
+  async removeFavorite(story) {
+    console.log(story);
+    //update user favorites[] by filtering out story passed as an argument
+    this.favorites = this.favorites.filter(i => i.storyId !== story.storyId);
+
+    //call handleFavoriteStories and pass api call method and story > 
+    //"remove" should evaluate to "DELETE"
+    await this.handleFavoriteStories("remove", story);
+  };
+
+  
+   // call api to post or delete story based on method passed as apiCallMethod - auth required
+   
+  async handleFavoriteStories(apiCallMethod, story) {
+    //if we are adding the story, method = POST, if we are removing, method = DELETE
+    const method = apiCallMethod === "push" ? "POST" : "DELETE";
+
+    //call api using method variable
+    const token = this.loginToken;
+    await axios({
+      url: `${BASE_URL}/users/${this.username}/favorites/${story.storyId}`,
+      method: method,
+      data: { token },
+    })
+
+    
+  };
+
+  //checks if story is part of the users favorites[] > returns true or false
+  isInFavorites(story) {
+    return this.favorites.some(i => (i.storyId === story.storyId));
   }
 
-  /** Add favorites */
+  /** 
+   * checks if story is part of the users ownStories[] > returns true or false 
+   */
 
+  isOwnStory(story) {
+    return this.ownStories.some(i => (i.storyId === story.storyId));
+  }
+  
 }

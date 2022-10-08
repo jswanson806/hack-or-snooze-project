@@ -37,3 +37,19 @@
 .story-user {
   display: block;
 }
+
+.btn {
+  background: none;
+  border: none;
+  color: black;
+}
+
+.btn:hover {
+  color: blue;
+  cursor: pointer;
+}
+
+#fav-star:hover {
+  color: gold;
+  cursor: pointer;
+}

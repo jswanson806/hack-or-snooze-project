@@ -1,5 +1,7 @@
 "use strict";
 
+
+
 // So we don't have to keep re-finding things on page, find DOM elements once:
 
 const $body = $("body");
@@ -17,6 +19,8 @@ const $navSubmit = $("#nav-submit");
 const $navLogin = $("#nav-login");
 const $navUserProfile = $("#nav-user-profile");
 const $navLogOut = $("#nav-logout");
+const $navUserActions = $(".nav-user-actions");
+
 
 /** To make it easier for individual components to show just themselves, this
  * is a useful function that hides pretty much everything on the page. After
@@ -38,13 +42,15 @@ function hidePageComponents() {
 
 async function start() {
   console.debug("start");
-
   // "Remember logged-in user" and log in, if credentials in localStorage
-  await checkForRememberedUser();
-  await getAndShowStoriesOnStart();
+  await checkForRememberedUser(); //in user.js
+  await getAndShowStoriesOnStart(); //in stories.js
 
-  // if we got a logged-in user
-  if (currentUser) updateUIOnUserLogin();
+  // if we logged in a user, set loggedIn to true, update UI
+  if (currentUser) {
+    loggedIn = true;
+    updateUIOnUserLogin(); //in user.js
+  }
 }
 
 // Once the DOM is entirely loaded, begin the app

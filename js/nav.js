@@ -8,8 +8,8 @@
 
 function navAllStories(evt) {
   console.debug("navAllStories", evt);
-  hidePageComponents();
-  putStoriesOnPage();
+  hidePageComponents(); //in main.js
+  putStoriesOnPage(); //in stories.js
 }
 
 $body.on("click", "#nav-all", navAllStories);
@@ -18,7 +18,7 @@ $body.on("click", "#nav-all", navAllStories);
 
 function navLoginClick(evt) {
   console.debug("navLoginClick", evt);
-  hidePageComponents();
+  hidePageComponents(); //in main.js
   $loginForm.show();
   $signupForm.show();
 }
@@ -32,23 +32,27 @@ function updateNavOnLogin() {
   $(".main-nav-links").show();
   $navLogin.hide();
   $navLogOut.show();
+  $navUserActions.show();
   $navUserProfile.text(`${currentUser.username}`).show();
+  $allStoriesList.hide();
+  putStoriesOnPage(); //in stories.js
 }
 
-/**  Show New Post Form on click on "Post"  */
+/**  Show New Post Form on click on "Submit"  */
 
-function navPostClick(evt) {
+function navSubmitClick(evt) {
   console.debug("navPostClick", evt);
-  hidePageComponents();
-  $allStoriesList.show();
+  hidePageComponents(); //in main.js
+  $allStoriesList.hide();
   $submitForm.show();
 }
 
-$navSubmit.on('click', navPostClick);
+$navSubmit.on('click', navSubmitClick);
 
 function navFavoritesClick(evt) {
   console.debug("navFavoritesClick", evt);
-  hidePageComponents();
+  hidePageComponents(); //in main.js
+  putFavoriteStoriesOnPage(); //in stories.js
   $favStoriesList.show();
 }
 
