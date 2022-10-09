@@ -264,7 +264,7 @@ class User {
 
   //remove story and update user favorites[] > call handleFavoriteStories()
   async removeFavorite(story) {
-    console.log(story);
+   
     //update user favorites[] by filtering out story passed as an argument
     this.favorites = this.favorites.filter(i => i.storyId !== story.storyId);
 

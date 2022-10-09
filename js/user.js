@@ -2,6 +2,7 @@
 
 // global to hold the User instance of the currently-logged-in user
 let currentUser;
+// global to hold the logged in status of a user
 let loggedIn;
 
 /******************************************************************************
